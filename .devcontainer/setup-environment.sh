@@ -3,6 +3,8 @@ set -e
 
 echo "Setting up swaparoony PyTorch ML environment..."
 
+sudo chown -R spousty-devcontainer /workspaces/swaparoony
+
 WORKSPACE_DIR="/workspaces/swaparoony"
 
 # Generate nvidia-provided.txt
@@ -14,9 +16,10 @@ else
 fi
 
 # Update system packages
-apt-get update && apt-get install -y \
+sudo apt-get update && sudo apt-get install -y \
     git curl wget build-essential \
-    && rm -rf /var/lib/apt/lists/*
+    && sudo rm -rf /var/lib/apt/lists/*
+
 
 # Install uv package manager
 echo "Installing uv package manager..."

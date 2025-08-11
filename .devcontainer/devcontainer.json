@@ -1,11 +1,16 @@
 {
   "name": "swaparoony PyTorch ML Development",
   "image": "nvcr.io/nvidia/pytorch:25.04-py3",
-
   "features": {
-    "ghcr.io/devcontainers/features/github-cli:1": {}
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      // 1. Change the username here
+      "username": "spousty-devcontainer",
+      "userUid": 2112,
+      "userGid": 2112,
+      "upgradePackages": false
+    }
   },
-
   "runArgs": [
     "--gpus=all",
     "--ipc=host",
@@ -13,10 +18,9 @@
     "--cpus=8",
     "--ulimit=memlock=-1",
     "--ulimit=stack=67108864",
-    "--security-opt=no-new-privileges",
-    "--mount", "type=bind,source=${env:SSH_AUTH_SOCK},target=/tmp/ssh-agent.sock"
+    "--mount",
+    "type=bind,source=${env:SSH_AUTH_SOCK},target=/tmp/ssh-agent.sock"
   ],
-
   "containerEnv": {
     "NVIDIA_VISIBLE_DEVICES": "all",
     "CUDA_VISIBLE_DEVICES": "0",
@@ -27,23 +31,13 @@
     "TRANSFORMERS_CACHE": "/workspaces/swaparoony/.cache/huggingface/transformers",
     "SSH_AUTH_SOCK": "/tmp/ssh-agent.sock"
   },
-
-
   "mounts": [
     "source=swaparoony-models,target=/workspaces/swaparoony/models,type=volume",
     "source=swaparoony-datasets,target=/workspaces/swaparoony/data,type=volume",
     "source=swaparoony-cache-hf,target=/workspaces/swaparoony/.cache/huggingface,type=volume",
     "source=swaparoony-cache-torch,target=/workspaces/swaparoony/.cache/torch,type=volume"
   ],
-
-  "remoteEnv": {
-    "SSH_AUTH_SOCK": "${localEnv:SSH_AUTH_SOCK}"
-  },
-
-
-
   "workspaceFolder": "/workspaces/swaparoony",
-
   "customizations": {
     "vscode": {
       "settings": {
@@ -70,15 +64,13 @@
       ]
     }
   },
-
-  "forwardPorts": [6006],
-
+  "forwardPorts": [
+    6006
+  ],
   "postCreateCommand": ".devcontainer/setup-environment.sh",
-
   "hostRequirements": {
     "gpu": true,
     "memory": "24gb"
   },
-
-  "remoteUser": "root"
+  "remoteUser": "spousty-devcontainer"
 }
