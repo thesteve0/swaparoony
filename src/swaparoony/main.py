@@ -5,14 +5,19 @@ import cv2
 
 
 model_path = "models/inswapper_128.onnx"
-input_picture = cv2.imread("data/photos-for-ai/input/steve.png")
+input_picture = cv2.imread("data/photos-for-ai/input/grant1.jpg")
+# input_picture = cv2.imread("data/photos-for-ai/input/steve.png")
+
 destination_picture = cv2.imread(
     # "data/photos-for-ai/destination/Hubert_Humphrey_Portrait_Colorized.jpg"
     # "data/photos-for-ai/destination/Bronzino_-_Portrait_of_a_Young_Man,_1550-1555.jpg"
     # "data/photos-for-ai/destination/preview16.jpg"
+    "data/photos-for-ai/destination/shits-on-fire.webp"
     # Beckham
     # "data/more-samples/0e09ee6468623715aec8be59d0c1dab8.jpg"
-    "data/more-samples/upbeat-homeless-man.jpg"
+    # "data/more-samples/upbeat-homeless-man.jpg"
+    # "data/more-samples/GP9OI4gnNdMmeas7NQ78gw45c.webp"
+    # "data/more-samples/portrait-of-a-man-antonello-da-messina-9da60a-1024.png"
 )
 
 value = 0

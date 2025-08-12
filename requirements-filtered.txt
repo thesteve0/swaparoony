@@ -1,2 +1,2 @@
 insightface
-onnxruntime
+onnxruntime-gpu
