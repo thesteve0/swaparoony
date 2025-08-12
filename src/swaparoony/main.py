@@ -1,6 +1,5 @@
 import insightface
 from insightface.app import FaceAnalysis
-from insightface.data import get_image as ins_get_image
 import cv2
 
 
