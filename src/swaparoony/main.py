@@ -1,67 +1,63 @@
-import insightface
-from insightface.app import FaceAnalysis
-import cv2
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
+
+from .api.routes.face_swap import router as face_swap_router
+from .api.dependencies import get_face_swap_service
+from .core.config import settings
+from .core.exceptions import ModelLoadError
 
 
-model_path = "models/inswapper_128.onnx"
-input_picture = cv2.imread("data/photos-for-ai/input/grant1.jpg")
-# input_picture = cv2.imread("data/photos-for-ai/input/steve.png")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup: Initialize models
+    try:
+        service = get_face_swap_service()
+        print("Face swap service initialized successfully")
+    except ModelLoadError as e:
+        print(f"Failed to initialize face swap service: {e}")
+        raise
 
-destination_picture = cv2.imread(
-    # "data/photos-for-ai/destination/Hubert_Humphrey_Portrait_Colorized.jpg"
-    # "data/photos-for-ai/destination/Bronzino_-_Portrait_of_a_Young_Man,_1550-1555.jpg"
-    # "data/photos-for-ai/destination/preview16.jpg"
-    "data/photos-for-ai/destination/shits-on-fire.webp"
-    # Beckham
-    # "data/more-samples/0e09ee6468623715aec8be59d0c1dab8.jpg"
-    # "data/more-samples/upbeat-homeless-man.jpg"
-    # "data/more-samples/GP9OI4gnNdMmeas7NQ78gw45c.webp"
-    # "data/more-samples/portrait-of-a-man-antonello-da-messina-9da60a-1024.png"
-)
+    yield
 
-value = 0
-app = FaceAnalysis(name="buffalo_l")
-app.prepare(ctx_id=0, det_size=(640, 640))
-swapper = insightface.model_zoo.get_model(model_path, download=True, download_zip=True)
+    # Shutdown: Clean up if needed
+    print("Shutting down face swap service")
 
 
-def swap_faces(faceSource, sourceFaceId, faceDestination, destFaceId):
-    faces = app.get(faceSource)
-    faces = sorted(faces, key=lambda x: x.bbox[0])
-    if len(faces) < sourceFaceId or sourceFaceId < 1:
-        print("we should never get here")
-        # print(
-        #     f"Source image only contains {len(faces)} faces, but you requested face {sourceFaceId}"
-        # )
+def create_app() -> FastAPI:
+    app = FastAPI(
+        title="Swaparoony Face Swap API",
+        description="Trade show face swapping application",
+        version="1.0.0",
+        lifespan=lifespan,
+    )
 
-    source_face = faces[sourceFaceId - 1]
+    # CORS middleware for web frontend
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],  # Configure appropriately for production
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
-    res_faces = app.get(faceDestination)
-    res_faces = sorted(res_faces, key=lambda x: x.bbox[0])
-    if len(res_faces) < destFaceId or destFaceId < 1:
-        print("we should never get here2")
-        # print(
-        #     f"Source image only contains {len(faces)} faces, but you requested face {sourceFaceId}"
-        # )
-    res_face = res_faces[destFaceId - 1]
+    # Include routers
+    app.include_router(face_swap_router, prefix="/api/v1", tags=["face-swap"])
 
-    result = swapper.get(faceDestination, res_face, source_face, paste_back=True)
+    @app.get("/")
+    async def root():
+        return {
+            "message": "Swaparoony Face Swap API",
+            "version": "1.0.0",
+            "status": "running",
+        }
 
-    global value
-    value = value + 1
-    print(f"processed: {value}...")
-
-    for face in faces:
-        res = swapper.get(result, face, source_face, paste_back=True)
-    cv2.imwrite("./t1_swapped.jpg", res)
-    # return result
+    return app
 
 
-swap_faces(
-    faceSource=input_picture,
-    sourceFaceId=1,
-    faceDestination=destination_picture,
-    destFaceId=1,
-)
+app = create_app()
 
-print("Done")
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run("src.swaparoony.main:app", host="0.0.0.0", port=8000, reload=True)
