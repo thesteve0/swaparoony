@@ -17,10 +17,10 @@ spec:
       resources:
         requests:
           cpu: 500m
-          memory: 1Gi
+          memory: 5Gi
         limits:
           cpu: 1000m
-          memory: 2Gi
+          memory: 10Gi
       readinessProbe:
         httpGet:
           path: /v1/models/swaparoony-face-swap
@@ -32,4 +32,4 @@ spec:
           path: /v1/models/swaparoony-face-swap
           port: 8080
         initialDelaySeconds: 60
-        periodSeconds: 30
+        periodSeconds: 303
