@@ -162,4 +162,8 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-models/inswapper_128.onnx
+
+#Need this when working on Intel laptop since this devcontainer file is specific for NVIDIA
+.devcontainer/
+
+.devcontainer/devcontainer.json

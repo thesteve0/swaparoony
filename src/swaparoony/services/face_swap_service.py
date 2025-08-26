@@ -25,11 +25,11 @@ class FaceSwapService:
     def initialize_models(self):
         """Initialize face analysis and swapper models, preload destination images"""
         try:
-            self.app = FaceAnalysis(name=settings.face_analysis_name)
+            self.app = FaceAnalysis(name=settings.face_analysis_name, allowed_modules=['detection', 'recognition'])
             self.app.prepare(ctx_id=settings.ctx_id, det_size=settings.det_size)
 
             self.swapper = insightface.model_zoo.get_model(
-                settings.model_path, download=True, download_zip=True
+                settings.model_path, download=False, download_zip=False
             )
 
             # Preload destination images

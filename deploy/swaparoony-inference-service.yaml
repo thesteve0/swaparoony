@@ -1,0 +1,35 @@
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  name: swaparoony-face-swap
+  namespace: default
+  annotations:
+    serving.kserve.io/deploymentMode: "RawDeployment"
+    serving.kserve.io/disable-initializer: "true"
+spec:
+  predictor:
+    containers:
+    - name: kserve-container
+      image: swaparoony-kserve:latest
+      ports:
+      - containerPort: 8080
+        protocol: TCP
+      resources:
+        requests:
+          cpu: 500m
+          memory: 1Gi
+        limits:
+          cpu: 1000m
+          memory: 2Gi
+      readinessProbe:
+        httpGet:
+          path: /v1/models/swaparoony-face-swap
+          port: 8080
+        initialDelaySeconds: 30
+        periodSeconds: 10
+      livenessProbe:
+        httpGet:
+          path: /v1/models/swaparoony-face-swap
+          port: 8080
+        initialDelaySeconds: 60
+        periodSeconds: 30
