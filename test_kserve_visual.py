@@ -12,7 +12,8 @@ from io import BytesIO
 
 # Configuration
 INPUT_IMAGE_PATH = "headshot.webp"  # Change this to your test image
-KSERVE_URL = "http://localhost:8080/v1/models/swaparoony-face-swap:predict"
+# KSERVE_URL = "http://localhost:8080/v1/models/swaparoony-face-swap:predict"
+KSERVE_URL = "https://route-swaparoony-face-swapper.apps.cluster.internal.rhai-tmm.dev/v1/models/swaparoony-face-swap:predict"
 OUTPUT_DIR = Path(".")  # Current directory
 
 

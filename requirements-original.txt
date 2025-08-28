@@ -1,5 +1,5 @@
 insightface
-onnxruntime
+onnxruntime-gpu
 kserve>=0.15.0
 fastapi>=0.104.0
 uvicorn[standard]>=0.24.0
