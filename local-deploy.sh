@@ -6,4 +6,5 @@
 
   # Redeploy to test the fix
   kubectl delete inferenceservice swaparoony-face-swap
-  kubectl apply -f deploy/swaparoony-inference-service.yaml
+  # kubectl apply -f deploy/swaparoony-inference-service.yaml
+  kubectl apply -f deploy/openshift-deploy.yaml

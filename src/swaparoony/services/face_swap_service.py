@@ -5,6 +5,7 @@ from typing import List, Tuple
 from pathlib import Path
 import insightface
 from insightface.app import FaceAnalysis
+import onnxruntime  # Import the onnxruntime library
 
 from ..core.config import settings
 from ..core.exceptions import (
@@ -25,11 +26,20 @@ class FaceSwapService:
     def initialize_models(self):
         """Initialize face analysis and swapper models, preload destination images"""
         try:
-            self.app = FaceAnalysis(name=settings.face_analysis_name, allowed_modules=['detection', 'recognition'])
+            self.app = FaceAnalysis(
+                name=settings.face_analysis_name,
+                allowed_modules=["detection", "recognition"],
+            )
             self.app.prepare(ctx_id=settings.ctx_id, det_size=settings.det_size)
 
             self.swapper = insightface.model_zoo.get_model(
                 settings.model_path, download=False, download_zip=False
+            )
+
+            # Log the ONNX Runtime execution providers
+            providers = onnxruntime.get_available_providers()
+            print(
+                f"ONNX Runtime is using the following execution providers: {providers}"
             )
 
             # Preload destination images

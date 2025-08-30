@@ -40,7 +40,9 @@ class KServeFaceSwapModel(kserve.Model):
             self.face_swap_service = FaceSwapService()
             self.face_swap_service.initialize_models()
 
-            logger.info(f"Face swap models loaded successfully! {len(self.face_swap_service.destination_images)} destination images loaded.")
+            logger.info(
+                f"Face swap models loaded successfully! {len(self.face_swap_service.destination_images)} destination images loaded."
+            )
             self.ready = True
             return True
         except ModelLoadError as e:
@@ -57,13 +59,12 @@ class KServeFaceSwapModel(kserve.Model):
     ) -> Dict[str, Any]:
         """Main prediction method - perform face swap"""
         logger.info("predict() method called")
-        logger.info(f"Request keys: {list(request.keys()) if request else 'None'}")
 
         if not self.ready:
             return {
                 "success": False,
                 "error": "Model not ready",
-                "detail": "Face swap models are not loaded"
+                "detail": "Face swap models are not loaded",
             }
 
         try:
@@ -76,7 +77,7 @@ class KServeFaceSwapModel(kserve.Model):
                 return {
                     "success": False,
                     "error": "Missing required parameter: image",
-                    "detail": "Request must contain base64 encoded image"
+                    "detail": "Request must contain base64 encoded image",
                 }
 
             # Decode base64 image to bytes
@@ -86,7 +87,7 @@ class KServeFaceSwapModel(kserve.Model):
                 return {
                     "success": False,
                     "error": "Invalid image data",
-                    "detail": f"Could not decode base64 image: {str(e)}"
+                    "detail": f"Could not decode base64 image: {str(e)}",
                 }
 
             # Process face swap using existing service
@@ -98,10 +99,7 @@ class KServeFaceSwapModel(kserve.Model):
 
             # Format response to match FastAPI schema
             swapped_images = [
-                {
-                    "image_data": base64_data,
-                    "destination_name": filename
-                }
+                {"image_data": base64_data, "destination_name": filename}
                 for base64_data, filename in results
             ]
 
@@ -109,7 +107,7 @@ class KServeFaceSwapModel(kserve.Model):
                 "success": True,
                 "message": f"Successfully swapped face onto {len(swapped_images)} images",
                 "swapped_images": swapped_images,
-                "faces_detected_in_source": faces_detected
+                "faces_detected_in_source": faces_detected,
             }
 
             logger.info(f"Face swap completed: {len(swapped_images)} images processed")
@@ -117,38 +115,22 @@ class KServeFaceSwapModel(kserve.Model):
 
         except NoFaceDetectedError as e:
             logger.warning(f"No face detected: {e}")
-            return {
-                "success": False,
-                "error": "No face detected",
-                "detail": str(e)
-            }
+            return {"success": False, "error": "No face detected", "detail": str(e)}
         except InsufficientFacesError as e:
             logger.warning(f"Insufficient faces: {e}")
-            return {
-                "success": False,
-                "error": "Insufficient faces",
-                "detail": str(e)
-            }
+            return {"success": False, "error": "Insufficient faces", "detail": str(e)}
         except InvalidImageError as e:
             logger.warning(f"Invalid image: {e}")
-            return {
-                "success": False,
-                "error": "Invalid image",
-                "detail": str(e)
-            }
+            return {"success": False, "error": "Invalid image", "detail": str(e)}
         except FaceSwapError as e:
             logger.error(f"Face swap error: {e}")
-            return {
-                "success": False,
-                "error": "Face swap failed",
-                "detail": str(e)
-            }
+            return {"success": False, "error": "Face swap failed", "detail": str(e)}
         except Exception as e:
             logger.error(f"Unexpected error: {e}")
             return {
                 "success": False,
                 "error": "Internal server error",
-                "detail": f"Unexpected error: {str(e)}"
+                "detail": f"Unexpected error: {str(e)}",
             }
 
     def preprocess(
@@ -156,14 +138,13 @@ class KServeFaceSwapModel(kserve.Model):
     ) -> Dict[str, Any]:
         """Preprocess incoming request"""
         logger.info("preprocess() method called")
-        logger.info(f"Request type: {type(request)}")
 
         # TODO: In next iteration, handle multipart form data conversion
         # - Extract image from base64 or binary data
         # - Validate image format and size
         # - Extract face IDs from request
 
-        logger.info("Preprocessing completed (simulated)")
+        logger.info("Preprocessing completed")
         return request
 
     def postprocess(
@@ -171,21 +152,20 @@ class KServeFaceSwapModel(kserve.Model):
     ) -> Dict[str, Any]:
         """Postprocess prediction results"""
         logger.info("postprocess() method called")
-        logger.info(f"Result keys: {list(result.keys()) if result else 'None'}")
 
         # TODO: In next iteration, format response for client
         # - Convert base64 images to appropriate format
         # - Add metadata about processing
         # - Format according to API specification
 
-        logger.info("Postprocessing completed (simulated)")
+        logger.info("Postprocessing completed")
         return result
 
 
 if __name__ == "__main__":
     # This is how KServe starts the model server
     model = KServeFaceSwapModel("swaparoony-face-swap")
-    
+
     # Explicitly load the model
     logger.info("Loading model...")
     if model.load():
