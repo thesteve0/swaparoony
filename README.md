@@ -160,10 +160,11 @@ kubectl port-forward service/swaparoony-face-swap-predictor 8080:80
 python test_kserve_visual.py
 ```
 
-** Finding the inference server in the OpenShift Web Console **
-Home -> API Explorer -> filter by kind text box -> inferenceservice -> instances
+**Finding the inference server in the OpenShift Web Console**
 
-From there you can edit the stop annotation to true = shutdown the InferenceServe and delete the node from the cluster
+*Home -> API Explorer -> filter by kind text box -> inferenceservice -> instances*
+
+From there you can edit the stop annotation to true which will shutdown the InferenceServe and delete the node from the cluster
 
 ## 🎮 Frontend Interface
 
